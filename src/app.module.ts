@@ -8,9 +8,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
-import { EnvConfiguration } from './config/app.config';
-import { JoiValidationSchema } from './config/joi.validation';
-import { validate } from "./config/env.validation";
+// import { EnvConfiguration } from './config/app.config';
+// import { JoiValidationSchema } from './config/joi.validation';
+import { EnvConfig, validate } from "./config/env.validation";
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { validate } from "./config/env.validation";
       isGlobal: true,
       // load: [EnvConfiguration],
       // validationSchema: JoiValidationSchema,
-      validate: validate,
+      validate,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "public")
@@ -26,8 +26,8 @@ import { validate } from "./config/env.validation";
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>("MONGODB")
+      useFactory: async (configService: ConfigService<EnvConfig>) => ({
+        uri: configService.get("MONGODB")
       })
     }),
     PokemonModule,
@@ -37,5 +37,4 @@ import { validate } from "./config/env.validation";
   controllers: [],
   providers: [],
 })
-export class AppModule {
-}
+export class AppModule { }
